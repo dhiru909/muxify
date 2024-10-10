@@ -1,0 +1,19 @@
+    .mapboxgl-popup-close-button {
+        display: none;
+        padding: 0%;
+    }
+
+    .mapboxgl-popup-content {
+
+        padding-top: 1px;
+        padding-bottom: 1px;
+        padding-right: 0px;
+        padding-left: 0px;
+    }
+
+
+    .mapboxgl-popup-content-wrapper {
+        padding: 100px;
+        margin: 10%;
+    }
+    
