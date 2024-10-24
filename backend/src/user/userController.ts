@@ -16,9 +16,9 @@ const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 const region = process.env.S3_REGION;
 const Bucket = process.env.S3_BUCKET;
  AWS.config.update({
-  region: 'ap-south-1',
+  region: region,
   accessKeyId: accessKeyId,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+  secretAccessKey: secretAccessKey
 });
  const s3 = new AWS.S3();
 // This function is responsible for creating a new user in the database.
@@ -66,7 +66,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
      
   const params = {
-    Bucket: 'dhirajkhali',
+    Bucket: Bucket!,
     Key: fileName,
     Body: fs.createReadStream(filePath)
   }

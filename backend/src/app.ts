@@ -6,11 +6,12 @@ import createHttpError, { HttpError } from "http-errors"; // Importing the http-
 import { config } from "./config/config"; // Importing the configuration settings for the application.
 import globalErrorHandler from "./middlewares/globalErrorHandler"; // Importing the error handler middleware.
 import userRouter from "./user/userRouter"; // Importing the router for user endpoints.
-import projRouter from "./project/projectRouter"; // Importing the router for project endpoints.
 import cors from "cors"; // Importing the CORS middleware.
 import cookieParser from 'cookie-parser';
 import rateLimiter from "./middlewares/rateLimiter";
 import cluster from "cluster";
+import videoRouter from "./video/videoRouter"
+import authenticate from "./middlewares/authenticate";
 const app = express(); // Creating a new Express application.
 app.enable('trust proxy');
 // app.use(rateLimiter)
@@ -45,9 +46,7 @@ app.get("/", (req, res, next) => {
 
 // Mounting the user router at the "/api/users" path.
 app.use("/api/users",userRouter);
-
-// Mounting the project router at the "/api/projects" path.
-app.use("/api/projects", projRouter);
+app.use("/api/videos",authenticate,videoRouter)
 
 // Adding the global error handler middleware to the application.
 app.use(globalErrorHandler);

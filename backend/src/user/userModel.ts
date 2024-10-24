@@ -27,7 +27,11 @@ const userSchema = new mongoose.Schema<User>(
       type:Role,
       default:Role.USER
     },
-    
+    credit:{
+      type:Number,
+      default:20,
+
+    },
 
   },
   { timestamps: true }

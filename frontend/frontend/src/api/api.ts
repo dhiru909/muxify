@@ -1,123 +1,93 @@
 import apiRequest from "@/lib/apiRequest"
-
-const fetchProjects = async(queryKey:any)=>{
-    
-    try {
-        // var formData = new FormData();
-        // formData.append('lat', queryKey.lat);
-        // formData.append('long', queryKey.long);
-        
-//         let data = JSON.stringify({
-//   "lat": queryKey.lat,
-//   "long": queryKey.long
-// });
-console.log({lat:queryKey.lat,long:queryKey.long});
-
-    const response = await apiRequest.post('/projects',{lat:queryKey.lat,long:queryKey.long},{
-        // data:formData,
-        method:'get',
-        maxBodyLength:Infinity,
-        headers:{
-            // "Authorization": "Bearer "+ queryKey.userInfo.accessToken,
-            "Content-Type": "application/json"
-        },
-        
-    })
-    return response.data
-    } catch (error) {
-    console.error('Error fetching projects:', error);
-    throw error;
-  }
-};
-
-const fetchSingleProject = async (id:string) => {
-    try {
-        const response = await apiRequest.get(`/projects/${id}`,{
-            method:'get',
-            headers:{
-                "Content-Type": "application/json"
-            },
-        })
-        return response.data
-    } catch (error) {
-        console.error('Error fetching single project:', error);
-        throw error;
-    }
-}
-const fetchProjectsOfUSer = async (id:string) => {
-    try {
-        const response = await apiRequest.get(`/projects/own-projects/${id}`,{
-            method:'get',
-            headers:{
-                "Content-Type": "application/json"
-            },
-        })
-        return response.data
-    } catch (error) {
-        console.error('Error fetching single project:', error);
-        throw error;
-    }
+type QueryKey={
+    fileName:string;
+    accessToken:string;
+    fileType:string;
 }
 
-const deleteProject = async (queryKey:any)=>{
-    try {
-        const response = await apiRequest.delete(`/projects/${queryKey.id}`,{
-            method:'delete',
-            headers:{
-                 "Authorization": "Bearer "+ queryKey.userInfo.accessToken,
-                "Content-Type": "application/json"
-            },
-        })
-        return response.data
-    } catch (error) {
-        console.error('Error fetching single project:', error);
-        throw error;
-    }
-}
-const updateProject = async (queryKey:any)=>{
+const getSinglePresignedUrl = async (queryKey:QueryKey) => {
     try {
         
-        const response = await apiRequest.patch(`/projects/${queryKey.id}`,queryKey.formData,{            
-            method:'patch',
-            
-            headers:{
-                 "Authorization": "Bearer "+ queryKey.userInfo.accessToken,
-                 
-                
-            },
-        })
-        return response.data
-    } catch (error) {
-        console.error('Error fetching single project:', error);
-        throw error;
-    }
-}
-const uploadProject = async (queryKey:any)=>{
-    try {
-        
-        const response = await apiRequest.post(`/projects/add-project`,queryKey.formData,{            
+        const response = await apiRequest.post(`/videos/generate-single-presigned-url`,{
+            fileName:queryKey.fileName,
+            fileType:queryKey.fileType
+        },{
             method:'post',
             headers:{
-                 "Authorization": "Bearer "+ queryKey.userInfo.accessToken,
-                 
-                
+                "Content-Type": "application/json",
+                "Authorization":"Bearer "+queryKey.accessToken
             },
         })
+        console.log(response.data);
+        
         return response.data
     } catch (error) {
         console.error('Error fetching single project:', error);
         throw error;
     }
 }
-const getUserDetails = async(id:string)=>{
+
+const startMultiPartUpload = async (fileName:string,contentType:string,accessToken:string) => {
     try {
-        const response = await apiRequest.get(`/users/${id}`,{
+        
+        const response = await apiRequest.post(`/videos/start-multipart-upload`,{
+            fileName:fileName,
+            contentType:contentType
+        },{
             method:'get',
             headers:{
-                 
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization":"Bearer "+accessToken
             },
         })
+        console.log(response.data);
+        
+        return response.data
+    } catch (error) {
+        console.error('Error fetching single project:', error);
+        throw error;
+    }
+}
+
+const getMultiplePresignedUrls = async (fileName:string,uploadId:string,partNumbers:Number,accessToken:string) => {
+    try {
+        
+        const response = await apiRequest.post(`/videos/generate-multiple-presigned-url`,{
+            fileName:fileName,
+            uploadId:uploadId,
+            partNumbers:partNumbers
+        },{
+            method:'post',
+            headers:{
+                "Content-Type": "application/json",
+                "Authorization":"Bearer "+accessToken
+            },
+        })
+        
+        return response.data
+    } catch (error) {
+        console.error('Error fetching single project:', error);
+        throw error;
+    }
+}
+const completeMultiPartUpload = async (fileName:string,uploadId:string,parts:[],accessToken:string) => {
+    try {
+        
+        const response = await apiRequest.post(`/videos/complete-multipart-upload`,
+          {
+            fileName: fileName,
+            uploadId: uploadId,
+            parts: parts,
+          },
+          {
+            method:"post",
+            headers:{
+                "Content-Type": "application/json",
+                "Authorization":"Bearer "+accessToken
+            }
+          }
+        );
+        
         return response.data
     } catch (error) {
         console.error('Error fetching single project:', error);
@@ -127,4 +97,4 @@ const getUserDetails = async(id:string)=>{
 
 
 
-export   {fetchProjects,fetchSingleProject,deleteProject,getUserDetails,fetchProjectsOfUSer,updateProject,uploadProject}
+export   {getSinglePresignedUrl, startMultiPartUpload, getMultiplePresignedUrls ,completeMultiPartUpload}

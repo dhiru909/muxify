@@ -19,10 +19,9 @@ export interface AuthRequest extends Request {
  */
 const authenticate = (req: Request, res: Response, next: NextFunction) => {
   // Extract the authorization token from the request header
-  var ip = req.headers['x-real-ip'] || req.socket.remoteAddress;
-  console.log(ip)
+  // var ip = req.headers['x-real-ip'] || req.socket.remoteAddress;
+  // console.log(ip)
   const token = req.header("Authorization");
-
   // If the token is missing, return a 401 Unauthorized error
   if (!token) {
     return next(createHttpError(401, "Authorization Token is required"));

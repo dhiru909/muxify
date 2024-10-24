@@ -1,0 +1,65 @@
+{
+    "Records": [{
+        "eventVersion": "2.1",
+        "eventSource": "aws:s3",
+        "awsRegion": "ap-south-1",
+        "eventTime": "2024-10-21T14:30:40.882Z",
+        "eventName": "ObjectCreated:Put",
+        "userIdentity": {
+            "principalId": "AWS:AIDAVRUVR5CV6DRLOQ2FA"
+        },
+        "requestParameters": {
+            "sourceIPAddress": "152.59.107.0"
+        },
+        "responseElements": {
+            "x-amz-request-id": "WVD7YQJ2H5SWCXQQ",
+            "x-amz-id-2": "Cz2zTBFPWl+LR3TB1kaXmhd8yYxSX/LB6eSV5LoN8CEEsmjcJhXyP2WPF1yTw5qDMsme5hrccEE9epHqTs//7OTqqORo7tc5"
+        },
+        "s3": {
+            "s3SchemaVersion": "1.0",
+            "configurationId": "NewVideo",
+            "bucket": {
+                "name": "dhirajkhali",
+                "ownerIdentity": {
+                    "principalId": "A32SE1A34JO064"
+                },
+                "arn": "arn:aws:s3:::dhirajkhali"
+            },
+            "object": {
+                "key": "WIN_20240828_18_54_49_Pro.mp4",
+                "size": 1075342,
+                "eTag": "8b2cbfb421fd9ae71218b29fb4abedf4",
+                "sequencer": "0067166590B828FDF0"
+            }
+        }
+    }]
+}
+
+{
+    "fileData": {
+        "ServerSideEncryption": "AES256",
+        "Location": "https://dhirajkhali.s3.ap-south-1.amazonaws.com/videos%2Freact+mapbox+gl+integration+to+show+marker+on+map+_+React+Beginners+Tutorial+-+YouTube+%E2%80%94+Mozilla+Firefox+2024-08-18+09-18-14.mp4",
+        "Bucket": "dhirajkhali",
+        "Key": "videos/react mapbox gl integration to show marker on map _ React Beginners Tutorial - YouTube — Mozilla Firefox 2024-08-18 09-18-14.mp4",
+        "ETag": "\"3bf669e2a4e423bc2708fdbe1e89c106-4\""
+    }
+}
+
+
+{
+    "fileName": "react mapbox gl integration to show marker on map _ React Beginners Tutorial - YouTube — Mozilla Firefox 2024-08-18 09-18-14.mp4",
+    "uuid": "6c3b2d2b-529c-4afb-842e-f7ed67e6af95.mp4",
+    "presignedUrls": ["https://dhirajkhali.s3.ap-south-1.amazonaws.com/videos/6c3b2d2b-529c-4afb-842e-f7ed67e6af95.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVRUVR5CVVH6CIEYK%2F20241023%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20241023T123839Z&X-Amz-Expires=172800&X-Amz-Signature=05997cafd86cb8719cb5a7097e7e01e584a88e618c90f002b9bc4991158416cf&X-Amz-SignedHeaders=host&partNumber=1&uploadId=fwNB7OJkkO97Bw3qF9mw7mVuY0zZgloKB8hGAazYEs4q7ZeUtcHuktbVKfGatzzcpgS3tcugFcYdAUtjj0wqTN9w5MMh1g1.mUZUoj1vYRj.mEn4Dc0JRcO.3mHacOyL", "https://dhirajkhali.s3.ap-south-1.amazonaws.com/videos/6c3b2d2b-529c-4afb-842e-f7ed67e6af95.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVRUVR5CVVH6CIEYK%2F20241023%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20241023T123839Z&X-Amz-Expires=172800&X-Amz-Signature=fce958f96d4cdecfa8059ce5ed13ac8a36c35ee20acf1f71021f55497476a65d&X-Amz-SignedHeaders=host&partNumber=2&uploadId=fwNB7OJkkO97Bw3qF9mw7mVuY0zZgloKB8hGAazYEs4q7ZeUtcHuktbVKfGatzzcpgS3tcugFcYdAUtjj0wqTN9w5MMh1g1.mUZUoj1vYRj.mEn4Dc0JRcO.3mHacOyL", "https://dhirajkhali.s3.ap-south-1.amazonaws.com/videos/6c3b2d2b-529c-4afb-842e-f7ed67e6af95.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVRUVR5CVVH6CIEYK%2F20241023%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20241023T123839Z&X-Amz-Expires=172800&X-Amz-Signature=3001ec97dfa490ca2fa41d43ad4972384e77356d1b9215f087093075aa131911&X-Amz-SignedHeaders=host&partNumber=3&uploadId=fwNB7OJkkO97Bw3qF9mw7mVuY0zZgloKB8hGAazYEs4q7ZeUtcHuktbVKfGatzzcpgS3tcugFcYdAUtjj0wqTN9w5MMh1g1.mUZUoj1vYRj.mEn4Dc0JRcO.3mHacOyL", "https://dhirajkhali.s3.ap-south-1.amazonaws.com/videos/6c3b2d2b-529c-4afb-842e-f7ed67e6af95.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVRUVR5CVVH6CIEYK%2F20241023%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20241023T123839Z&X-Amz-Expires=172800&X-Amz-Signature=6ad1759331d1e8da98bf3f4d7ee77852ddeaf620e6dc4e66df2c530db60dd984&X-Amz-SignedHeaders=host&partNumber=4&uploadId=fwNB7OJkkO97Bw3qF9mw7mVuY0zZgloKB8hGAazYEs4q7ZeUtcHuktbVKfGatzzcpgS3tcugFcYdAUtjj0wqTN9w5MMh1g1.mUZUoj1vYRj.mEn4Dc0JRcO.3mHacOyL"],
+    "parts": [{
+        "etag": "\"06f028fdfa326e13c6e4f80101fb5985\"",
+        "PartNumber": 1
+    }]
+}
+
+
+
+{
+    "fileName": "react mapbox gl integration to show marker on map _ React Beginners Tutorial - YouTube — Mozilla Firefox 2024-08-18 09-18-14.mp4",
+    "uuid": "3a52564c-fa3c-476f-8bbb-10e94adb1caa.mp4",
+    "presignedUrls": ["https://dhirajkhali.s3.ap-south-1.amazonaws.com/videos/3a52564c-fa3c-476f-8bbb-10e94adb1caa.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVRUVR5CVVH6CIEYK%2F20241023%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20241023T123435Z&X-Amz-Expires=172800&X-Amz-Signature=8fb7d86ada08bfd92089f62de54490e57cedd0058e2860d0b04e0114a4fa82e8&X-Amz-SignedHeaders=host&partNumber=1&uploadId=VIziOY8eYW1KV7VxLyBpz7PelzEplV6C4hip63sQIXQ8tbkYq43ngRTjDc6EJGMzjwx3aalecOQS2XaqxwG5.jkpDWDhJpWOEiFLiPOWH44_HgWmJK9QVx5sF7MxcjKU", "https://dhirajkhali.s3.ap-south-1.amazonaws.com/videos/3a52564c-fa3c-476f-8bbb-10e94adb1caa.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVRUVR5CVVH6CIEYK%2F20241023%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20241023T123435Z&X-Amz-Expires=172800&X-Amz-Signature=47200974cfe25d2d84f7885ec7a0f6d0e6c31c20f4c00268cf23e21b5abd54b2&X-Amz-SignedHeaders=host&partNumber=2&uploadId=VIziOY8eYW1KV7VxLyBpz7PelzEplV6C4hip63sQIXQ8tbkYq43ngRTjDc6EJGMzjwx3aalecOQS2XaqxwG5.jkpDWDhJpWOEiFLiPOWH44_HgWmJK9QVx5sF7MxcjKU", "https://dhirajkhali.s3.ap-south-1.amazonaws.com/videos/3a52564c-fa3c-476f-8bbb-10e94adb1caa.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVRUVR5CVVH6CIEYK%2F20241023%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20241023T123435Z&X-Amz-Expires=172800&X-Amz-Signature=c40d6d5bf5a040b5eeec488ee368aaf558550cedfa62580d510a0d1eaa457dde&X-Amz-SignedHeaders=host&partNumber=3&uploadId=VIziOY8eYW1KV7VxLyBpz7PelzEplV6C4hip63sQIXQ8tbkYq43ngRTjDc6EJGMzjwx3aalecOQS2XaqxwG5.jkpDWDhJpWOEiFLiPOWH44_HgWmJK9QVx5sF7MxcjKU", "https://dhirajkhali.s3.ap-south-1.amazonaws.com/videos/3a52564c-fa3c-476f-8bbb-10e94adb1caa.mp4?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVRUVR5CVVH6CIEYK%2F20241023%2Fap-south-1%2Fs3%2Faws4_request&X-Amz-Date=20241023T123435Z&X-Amz-Expires=172800&X-Amz-Signature=b1957a4750294f313feb4910f585f8f27188a9326a082425e31cad06304fc966&X-Amz-SignedHeaders=host&partNumber=4&uploadId=VIziOY8eYW1KV7VxLyBpz7PelzEplV6C4hip63sQIXQ8tbkYq43ngRTjDc6EJGMzjwx3aalecOQS2XaqxwG5.jkpDWDhJpWOEiFLiPOWH44_HgWmJK9QVx5sF7MxcjKU"]
+}

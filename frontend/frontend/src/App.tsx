@@ -7,10 +7,9 @@ import Register from '@/pages/register/Register';
 import { Layout, RequireAuth } from './pages/layout/Layout';
 import Login from './pages/login/Login';
 import { ThemeProvider } from './components/theme-provider';
-import ProjectInfoCard from './components/component/projectInfoCard';
 import Profile from './pages/profile/Profile';
 import ScrollToTopButton from './components/component/scrollToTopButton';
-import { LandingPage }from './components/LandingPage';
+import LandingPage from './components/LandingPage';
 import Home from './pages/home/Home';
 // import Navbar from './components/navbar/Navbar';
 // console.log(Navbar)
@@ -44,16 +43,6 @@ const router = createBrowserRouter([
       {
         path: '/profile/:id',
         element: <Profile />,
-      },
-      {
-        path: '/projects/:id/',
-        element: <ProjectInfoCard />,
-        children: [
-          {
-            path: '/projects/:id/update',
-            element: <ProjectInfoCard />,
-          },
-        ],
       },
     ],
   },
