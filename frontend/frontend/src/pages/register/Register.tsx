@@ -259,7 +259,7 @@ export default function Register() {
       <div className="w-full max-w-4xl flex  md:rounded-lg md:shadow-md overflow-hidden md:border-[#0f172a] md:border-4 mx-1">
         <div
           className=" w-3/5 bg-cover bg-center hidden sm:block "
-          style={{ backgroundImage: 'url("/alo2.jpg")' }}
+          style={{ backgroundImage: 'url("/muxify.svg")' }}
         ></div>
         <div className="w-full p-8 md:w-2/5">
           <h2 className="text-2xl font-extrabold font-poppins text-center text-foreground mb-8">

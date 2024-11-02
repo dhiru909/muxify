@@ -10,10 +10,12 @@ import {
   getMultiplePresignedUrls,
   getSinglePresignedUrl,
   startMultiPartUpload,
+  videoUploaded,
 } from '../../api/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
+import { toast } from '../ui/use-toast';
 
 type VideoLocalData = {
   fileName?: string;
@@ -48,6 +50,19 @@ export default function VideoUploader() {
       console.log('data', data);
     },
   });
+  const { isError: errorUploadingVideo, mutate: videoUploadedMutate } =
+    useMutation({
+      mutationKey: ['videos', file?.name],
+      mutationFn: videoUploaded,
+      onSuccess(data: string, variables: string, context: any) {
+        console.log('data', data);
+        toast({
+          title: 'Success',
+          description: 'Video uploaded successfully',
+          variant: 'default',
+        });
+      },
+    });
   useEffect(() => {
     (async () => {
       if (presignedUrl !== null) {
@@ -57,17 +72,27 @@ export default function VideoUploader() {
         try {
           // Use the presigned URL to upload the file to S3
           const uploadResponse = await fetch(presignedUrl, {
+            body: file,
             method: 'PUT',
-            body: file, // Upload the file directly
             headers: {
-              'Content-Type': file?.type!, // Ensure to set the correct content type
+              'Content-Type': file?.type!,
             },
           });
 
           if (uploadResponse.ok) {
+            const formData = {
+              title: file?.name,
+              uuid: localFileName,
+              status: 'UPLOADED',
+              etag: uploadResponse.headers.get('ETag')!,
+            };
+            const accessToken = userInfo?.accessToken;
+            console.log(userInfo?.accessToken);
+
+            videoUploadedMutate({ data: formData, accessToken });
+            console.log(uploadResponse);
             setUploadStatus('success');
             setFile(null);
-            console.log(uploadResponse);
           } else {
             setUploadStatus('error');
             console.error('Upload failed:', uploadResponse.statusText);
@@ -87,7 +112,7 @@ export default function VideoUploader() {
     if (localFileName && videoData) {
       localStorage.setItem(localFileName, JSON.stringify(videoData));
     }
-  }, [videoData,localFileName]);
+  }, [videoData, localFileName]);
 
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadStatus, setUploadStatus] = useState<
@@ -97,7 +122,7 @@ export default function VideoUploader() {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
-      setVideoData(null)
+      setVideoData(null);
       setFile(event.target.files[0]);
       setUploadStatus('idle');
       setLocalFileName(event.target.files[0].name!);
@@ -107,7 +132,7 @@ export default function VideoUploader() {
 
   const handleUpload = async () => {
     if (!file) return;
-    
+
     try {
       console.log(file);
       var re = /(?:\.([^.]+))?$/;
@@ -116,6 +141,7 @@ export default function VideoUploader() {
 
       if (file.size < 11000000) {
         const fileName = uuidv4() + extension;
+        setLocalFileName(fileName);
         const accessToken = userInfo?.accessToken;
         const fileType = file?.type;
         setUploading(true);
@@ -124,12 +150,13 @@ export default function VideoUploader() {
         fetchSinglePresignedUrlMutate({ fileName, accessToken, fileType });
       } else {
         console.log(file?.name);
-        
+
         let localDataOfVideo = await localStorage.getItem(file?.name);
-        console.log(JSON.parse(localDataOfVideo));
 
         if (localDataOfVideo) {
-          setVideoData(JSON.parse(localDataOfVideo));
+          let data = JSON.parse(localDataOfVideo);
+          console.log(data);
+          setVideoData(prev => (prev ? { ...prev, ...data } : data));
         }
         console.log(videoData);
 
@@ -138,6 +165,7 @@ export default function VideoUploader() {
           fileName = videoData?.uuid!;
         } else {
           fileName = uuidv4() + extension;
+          // setLocalFileName(fileName)
           setVideoData(data => ({
             ...data,
             fileName: file?.name,
@@ -190,11 +218,21 @@ export default function VideoUploader() {
             if (videoData?.parts[i]) {
               parts.push(videoData?.parts[i]);
             } else {
-              const response = await fetch(presignedUrl, {
-                body: chunk,
-                method: 'PUT',
+              const response = await axios.put(presignedUrl, chunk, {
                 headers: {
                   'Content-Type': file.type,
+                },
+                onUploadProgress(progressEvent) {
+                  setUploadProgress(prev =>
+                    Math.max(
+                      prev,
+                      Math.round(
+                        (((progressEvent.loaded * 100) / progressEvent.total) *
+                          (i + 1)) /
+                          totalChunks,
+                      ),
+                    ),
+                  );
                 },
               });
               parts.push({
@@ -208,11 +246,23 @@ export default function VideoUploader() {
               console.log(response.headers);
             }
           } else {
-            const response = await fetch(presignedUrl, {
-              body: chunk,
-              method: 'PUT',
+            const response = await axios.put(presignedUrl, chunk, {
+              // body: chunk,
+              // method: 'PUT',
               headers: {
                 'Content-Type': file.type,
+              },
+              onUploadProgress(progressEvent) {
+                setUploadProgress(prev =>
+                  Math.max(
+                    prev,
+                    Math.round(
+                      (((progressEvent.loaded * 100) / progressEvent.total) *
+                        (i + 1)) /
+                        totalChunks,
+                    ),
+                  ),
+                );
               },
             });
             parts.push({
@@ -226,7 +276,7 @@ export default function VideoUploader() {
             console.log(response.headers);
           }
 
-          setUploadProgress(((i + 1) / totalChunks) * 100);
+          // setUploadProgress(((i + 1) / totalChunks) * 100);
         }
         let complete_upload = await completeMultiPartUpload(
           fileName,
@@ -234,13 +284,24 @@ export default function VideoUploader() {
           parts,
           accessToken,
         );
+        const formData = {
+          title: file?.name,
+          uuid: fileName,
+          status: 'UPLOADED',
+          etag: complete_upload.fileData.ETag,
+        };
+        //  const accessToken = userInfo?.accessToken;
+        console.log(userInfo?.accessToken);
+        console.log("sfaf",fileName);
+        
+        videoUploadedMutate({ data: formData, accessToken });
         setUploadStatus('success');
         console.log(complete_upload);
         setVideoData(data => ({
           ...data,
           etag: complete_upload.fileData.ETag,
         }));
-        localStorage.removeItem(file?.name)
+        localStorage.removeItem(file?.name);
         setFile(null);
         console.log(parts);
         setUploading(false);

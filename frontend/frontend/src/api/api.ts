@@ -94,7 +94,27 @@ const completeMultiPartUpload = async (fileName:string,uploadId:string,parts:[],
         throw error;
     }
 }
+const videoUploaded = async (queryKey:{data:any,accessToken:string}) => {
+    try {
+        
+        const response = await apiRequest.post(`/videos/video-uploaded`,
+          queryKey.data,
+          {
+            method:"post",
+            headers:{
+                "Content-Type": "application/json",
+                "Authorization":"Bearer "+queryKey.accessToken
+            }
+          }
+        );
+        
+        return response.data
+    } catch (error) {
+        console.error('Error fetching single project:', error);
+        throw error;
+    }
+}
 
 
 
-export   {getSinglePresignedUrl, startMultiPartUpload, getMultiplePresignedUrls ,completeMultiPartUpload}
+export   {getSinglePresignedUrl, startMultiPartUpload, getMultiplePresignedUrls ,completeMultiPartUpload, videoUploaded}

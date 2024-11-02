@@ -43,4 +43,4 @@ export const videoSchema = new mongoose.Schema<Video>(
 );
 
 
-export default mongoose.model<Video>("User", videoSchema);
+export default mongoose.model<Video>("Video", videoSchema);

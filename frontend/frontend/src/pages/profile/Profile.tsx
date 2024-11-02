@@ -23,6 +23,8 @@ import { Input } from '@/components/ui/input';
 import { IoCloseCircleOutline } from 'react-icons/io5';
 import { toast } from '@/components/ui/use-toast';
 import { LoaderCircleIcon } from 'lucide-react';
+import VideoList from '@/components/component/video-list';
+import Loader from '@/components/component/loader';
 const formSchema = z.object({
   title: z.string().min(2, {
     message: 'Title must be at least 2 characters.',
@@ -39,7 +41,80 @@ const formSchema = z.object({
     .max(14, 'Password must be at most 14 characters'),
   file: z.instanceof(FileList).optional(),
 });
-
+const videos = [
+  {
+    id: '1',
+    title: 'My Awesome Video',
+    status: 'TRANSCODED',
+    thumbnail:
+      'https://dhirajkhali.s3.ap-south-1.amazonaws.com/transcoded/1080p-2c8e9a53-c249-43e7-87dc-831ea97de542.mkv',
+    qualities: {
+      '360p': '/path/to/video-360p.mp4',
+      '480p': '/path/to/video-480p.mp4',
+      '720p': '/path/to/video-720p.mp4',
+      '1080p':
+        'https://dhirajkhali.s3.ap-south-1.amazonaws.com/transcoded/1080p-2c8e9a53-c249-43e7-87dc-831ea97de542.mkv',
+    },
+  },
+  {
+    id: '1',
+    title: 'My Awesome Video',
+    status: 'TRANSCODED',
+    thumbnail:
+      'https://dhirajkhali.s3.ap-south-1.amazonaws.com/transcoded/1080p-2c8e9a53-c249-43e7-87dc-831ea97de542.mkv',
+    qualities: {
+      '360p': '/path/to/video-360p.mp4',
+      '480p': '/path/to/video-480p.mp4',
+      '720p': '/path/to/video-720p.mp4',
+      '1080p':
+        'https://dhirajkhali.s3.ap-south-1.amazonaws.com/transcoded/1080p-2c8e9a53-c249-43e7-87dc-831ea97de542.mkv',
+    },
+  },
+  {
+    id: '1',
+    title: 'My Awesome Video',
+    status: 'TRANSCODING',
+    thumbnail:
+      'https://dhirajkhali.s3.ap-south-1.amazonaws.com/trnscoded/1080p-2c8e9a53-c249-43e7-87dc-831ea97de542.mkv',
+    qualities: {
+      '360p': '/path/to/video-360p.mp4',
+      '480p': '/path/to/video-480p.mp4',
+      '720p': '/path/to/video-720p.mp4',
+      '1080p':
+        'https://dhirajkhali.s3.ap-south-1.amazonaws.com/transcoded/1080p-2c8e9a53-c249-43e7-87dc-831ea97de542.mkv',
+    },
+  },
+  {
+    id: '1',
+    title:
+      'My Awesome Video sdfkjbkjsdf hjbsdfsdf sdf jsd fsdf  sdfsd fsd fsdf sdf dg gs gdg dsg sdgds gsd gs sd gsd g sdg sd gsd gsd fsdfkjhsdfhdsjfsdjk ',
+    status: 'TRANSCODED',
+    thumbnail:
+      'https://dhirajkhali.s3.ap-south-1.amazonaws.com/transcoded/1080p-2c8e9a53-c249-43e7-87dc-831ea97de542.mkv',
+    qualities: {
+      '360p': '/path/to/video-360p.mp4',
+      '480p': '/path/to/video-480p.mp4',
+      '720p': '/path/to/video-720p.mp4',
+      '1080p':
+        'https://dhirajkhali.s3.ap-south-1.amazonaws.com/transcoded/1080p-2c8e9a53-c249-43e7-87dc-831ea97de542.mkv',
+    },
+  },
+  {
+    id: '1',
+    title: 'My Awesome Video',
+    status: 'UPLOADED',
+    thumbnail:
+      'https://dhirajkhali.s3.ap-south-1.amazonaws.com/transcoded/1080p-2c8e9a53-c249-43e7-87dc-831ea97de542.mkv',
+    qualities: {
+      '360p': '/path/to/video-360p.mp4',
+      '480p': '/path/to/video-480p.mp4',
+      '720p': '/path/to/video-720p.mp4',
+      '1080p':
+        'https://dhirajkhali.s3.ap-south-1.amazonaws.com/transcoded/1080-video_20220326_101212.mp4',
+    },
+  },
+  // ... more videos
+];
 const Profile = () => {
   // @ts-ignore
   const [error, setError] = useState(null);
@@ -96,7 +171,10 @@ const Profile = () => {
       <div
         className={`${addProjectCardVisible ? 'blur-sm' : ''} mt-[5.25rem] flex flex-col min-h-dvh`}
       >
-        <header className="bg-primary-background  py-12 md:py-16 lg:py-20">
+        <header
+          class="body"
+          className="body bg-primary-background  py-12 md:py-16 lg:py-20"
+        >
           <div className="container flex flex-col items-center text-center gap-4">
             <Avatar className="w-24 h-24 md:w-32 md:h-32">
               <AvatarImage src={userInfo?.dp} />
@@ -106,13 +184,23 @@ const Profile = () => {
               <h1 className="text-3xl font-bold text-primary-background md:text-4xl">
                 {userInfo?.username}
               </h1>
+              {/* <div class="glitch-wrapper">
+                <div class="glitch" data-text="Glitch Text">
+                  Glitch Text
+                </div>
+              </div> */}
               <p className="text-muted-foreground md:text-lg">
                 {userInfo?.username}
               </p>
             </div>
           </div>
         </header>
-        <main className="flex-1"></main>
+        <main className="flex-1">
+          <div className="h-20 w-full items-center text-center ">
+            <Loader />
+          </div>
+          <VideoList videos={videos} />
+        </main>
         <footer className="bg-muted p-6 md:py-12 w-full">
           <div className="container max-w-7xl grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 text-sm">
             <div className="grid gap-1">

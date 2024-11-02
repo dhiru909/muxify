@@ -118,8 +118,11 @@ export default function Login() {
     <div className="flex items-center justify-center h-[100vh] content-center md:my-12  bg-custom-gradient">
       <div className="w-full max-w-4xl flex  md:rounded-lg md:shadow-md overflow-hidden md:border-[#0f172a] md:border-4 mx-1">
         <div
-          className="w-3/5 bg-cover bg-center hidden sm:block "
-          style={{ backgroundImage: 'url("/alo2.jpg")' }}
+          className="w-3/5 bg-contain content-center bg-no-repeat hidden sm:block "
+          style={{
+            backgroundImage: 'url("/muxify.svg")',
+            objectFit: 'cover',
+          }}
         ></div>
         <div className="w-full p-8 md:w-2/5">
           <h2 className="text-2xl font-extrabold font-poppins text-center text-foreground mb-8">

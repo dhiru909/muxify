@@ -10,11 +10,14 @@ import { error, log } from "console";
  * @throws {Error} - If the database connection fails, the process exits with status code 1.
  */
 const connectDB = async () => {
+
   try {
     // Event emitted when the database connection is established successfully
     mongoose.connection.on("connected", () => {
       console.log(`MongoDB connected successfully`);
+
     });
+
 
     // Event emitted when there is an error while connecting to the database
     mongoose.connection.on("error", (err) => {
@@ -24,11 +27,19 @@ const connectDB = async () => {
     // Connect to the database using the connection string from the config file
     await mongoose.connect(config.databaseUrl as string, {
       useNewUrlParser: true,
-      useUnifiedTopology: true,
-      
+      useUnifiedTopology: true, 
+      useCreateIndex:true,
+      // autoReconnect:true,
+      socketOptions:{
+        connectTimeoutMS:20000
+      }
+
+
+// MONGO_CONNECTION_STRING=mongodb://admin:C5A9I5BrMlGvs4PO@SG-muxify-68024.servers.mongodirector.com:27017/admin
     });
 
   } catch (err) {
+    
     // If the database connection fails, log the error and exit the process
     console.log("failed to connect to database ", err);
     process.exit(1);

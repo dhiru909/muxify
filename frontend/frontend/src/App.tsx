@@ -53,7 +53,7 @@ function App() {
 
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-      <div className="overflow-hidden  	">
+      <div className="overflow-hidden ">
         <ScrollToTopButton />
         <RouterProvider router={router} />
       </div>

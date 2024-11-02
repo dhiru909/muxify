@@ -3,6 +3,10 @@ import { NextFunction, Request, Response } from "express";
 import * as AWS from 'aws-sdk';
 
 import { config } from "../config/config";
+import { AuthRequest } from "../middlewares/authenticate";
+import videoModel from "./videoModel";
+import { Video } from "./videoTypes";
+import createHttpError from "http-errors";
 const accessKeyId = config.awsS3.accessKeyId;
 const secretAccessKey = config.awsS3.secretAccessKey;
 const region = config.awsS3.region;
@@ -182,8 +186,10 @@ const completeMultiPartUpload = async(req:Request,res:Response,next:NextFunction
     },
   };
   try {
+   
     // @ts-ignore
     const data = await s3.completeMultipartUpload(params).promise();
+     
     res.status(200).json({ fileData: data });
   } catch (error) {
     console.error("Error completing multipart upload:", error);
@@ -192,4 +198,58 @@ const completeMultiPartUpload = async(req:Request,res:Response,next:NextFunction
 
 }
 
-export {generateSinglePresignedUrl, startMultiPartUpload, generateMultiplePresignedUrls, completeMultiPartUpload}
+const videoUploaded= async (req:Request,res:Response,next:NextFunction) => {
+  const {...data} = req.body
+  const _req = req as AuthRequest;
+
+  // @ts-ignore
+  const user = _req.userId;
+
+  // @ts-ignore
+  data.user = user
+  data.url = `https://${Bucket}.s3.${region}.amazonaws.com/videos/${data.uuid}`
+  // @ts-ignore
+  // data.fileName = data.fileName!
+  delete data.uuid
+  // @ts-ignore
+  let newVideo: Video;
+  try {
+      // Create a new video in the database
+      
+      console.log(data);
+      
+      newVideo = await videoModel.create({
+        ...data,
+        
+      });
+    //   const mulii = await s3.listMultipartUploads({Bucket:Bucket!}).promise()
+    // console.log(mulii);
+    // mulii.Uploads?.map(async (upload)=>{
+    //   console.log(upload.Key);
+    //   const respo = await s3.abortMultipartUpload({
+    //     Bucket:Bucket!,
+    //     Key:upload.Key!,
+    //     UploadId:upload.UploadId!
+    //   },(err,data)=>{
+    //     if(err){
+    //       console.log(err);
+          
+    //     }
+    //     console.log(data);
+        
+    //   }).promise()
+    //   console.log(respo);
+      
+    // })
+
+      // Send the created project as the response
+      // res.send({ "video":{} });
+    } catch (error) {
+      return next(createHttpError(500, "Error while creating Video"));
+    }
+
+  res.status(200).json({ fileData: newVideo });
+
+}
+
+export {generateSinglePresignedUrl, startMultiPartUpload, generateMultiplePresignedUrls, completeMultiPartUpload,videoUploaded}

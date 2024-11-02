@@ -109,7 +109,7 @@ const Navbar: React.FC = () => {
     <header className=" font-poppins ">
       <nav className="fixed bg-background z-20 top-0 h-[5.25rem] left-0 flex justify-between items-center w-full px-4 mx-auto py-4 bg-custom-gradient">
         <div className="flex items-center text-xl content-center text-center font-poppins cursor-pointer font-black">
-          <img src="muxify.svg" className="h-12 w-16 " />
+          <img src="muxify.svg" alt="MUXIFY" className="h-12 w-16 " />
         </div>
         <div
           ref={menuRef}
@@ -137,7 +137,7 @@ const Navbar: React.FC = () => {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Avatar className="  md:block  hover:bg-accent hover:text-accent-foreground">
-                        <AvatarImage src={userInfo.dp} alt="@shadcn" />
+                        <AvatarImage src={userInfo.dp} alt="DP" />
                         <AvatarFallback>DP</AvatarFallback>
                       </Avatar>
                     </DropdownMenuTrigger>
@@ -186,7 +186,7 @@ const Navbar: React.FC = () => {
             <div className=" flex  text-center  items-center flex-row gap-4">
               <div className={`flex text-center  items-center flex-row gap-2 `}>
                 <CreditsIcon size={28} />
-                <p className="text-lg text-pretty">69 Mins</p>
+                <p className="text-lg text-pretty">20 Mins</p>
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
