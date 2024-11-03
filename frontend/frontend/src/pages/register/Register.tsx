@@ -256,7 +256,7 @@ export default function Register() {
 
   return (
     <div className=" flex items-center justify-center h-[100vh]  md:my-12 content-center  bg-custom-gradient">
-      <div className="w-full max-w-4xl flex  md:rounded-lg md:shadow-md overflow-hidden md:border-[#0f172a] md:border-4 mx-1">
+      <div className="w-full max-w-4xl flex  md:rounded-lg md:shadow-md overflow-hidden md:border-muted md:border-4 mx-1">
         <div
           className=" w-3/5 bg-cover bg-center hidden sm:block "
           style={{ backgroundImage: 'url("/muxify.svg")' }}

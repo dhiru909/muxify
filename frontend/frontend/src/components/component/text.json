@@ -65,3 +65,32 @@
 }
 
 
+
+
+// const {
+//   data,
+//   fetchNextPage,
+//   hasNextPage,
+//   isFetchingNextPage,
+//   isError,
+//   isLoading,
+// } = useInfiniteQuery({
+//   queryKey: ['videos'],
+//   queryFn: ({ pageParam = 1 }) =>
+//     getVideos({
+//       data: { page: pageParam, limit: 10 },
+//       accessToken: accessToken,
+//     }),
+//   getNextPageParam: (lastPage, allPages) => {
+//     const morePagesExist = lastPage?.length === 10;
+//     if (!morePagesExist) return undefined;
+//     return allPages.length + 1;
+//   },
+//   onError: error => {},
+//   keepPreviousData: true,
+//   refetchInterval: 5000,
+//   refetchIntervalInBackground: true,
+//   retry: 1,
+//   retryDelay: 3000,
+//   staleTime: 60000,
+// });

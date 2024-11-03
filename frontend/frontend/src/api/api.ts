@@ -22,7 +22,7 @@ const getSinglePresignedUrl = async (queryKey:QueryKey) => {
         
         return response.data
     } catch (error) {
-        console.error('Error fetching single project:', error);
+        console.error('Error fetching presigned url:', error);
         throw error;
     }
 }
@@ -44,7 +44,7 @@ const startMultiPartUpload = async (fileName:string,contentType:string,accessTok
         
         return response.data
     } catch (error) {
-        console.error('Error fetching single project:', error);
+        console.error('Error starting upload:', error);
         throw error;
     }
 }
@@ -66,7 +66,7 @@ const getMultiplePresignedUrls = async (fileName:string,uploadId:string,partNumb
         
         return response.data
     } catch (error) {
-        console.error('Error fetching single project:', error);
+        console.error('Error fetching presigned url:', error);
         throw error;
     }
 }
@@ -90,7 +90,7 @@ const completeMultiPartUpload = async (fileName:string,uploadId:string,parts:[],
         
         return response.data
     } catch (error) {
-        console.error('Error fetching single project:', error);
+        console.error('Error completing upload:', error);
         throw error;
     }
 }
@@ -110,11 +110,53 @@ const videoUploaded = async (queryKey:{data:any,accessToken:string}) => {
         
         return response.data
     } catch (error) {
-        console.error('Error fetching single project:', error);
+        console.error('Error uploading video:', error);
+        throw error;
+    }
+}
+const getTotalVideoCount = async (queryKey: { accessToken: string }) => {
+    console.log(queryKey)
+    try {
+        const response = await apiRequest.get(`/videos/get-total-count`,
+        
+          
+          {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + queryKey.accessToken
+            }
+            
+          }
+        );
+
+        return response.data.total;
+    } catch (error) {
+        console.error('Error fetching total video count:', error);
+        throw error;
+    }
+}
+const getVideos = async (queryKey:{data:any,accessToken:string}) => {
+    try {
+        
+        const response = await apiRequest.get(`/videos/fetch-videos`,
+          {
+            headers:{
+                "Content-Type": "application/json",
+                "Authorization":"Bearer "+queryKey.accessToken
+            },params:{
+                page:queryKey.data.page,
+                limit:queryKey.data.limit
+            },
+          }
+        );
+        
+        return response.data
+    } catch (error) {
+        console.error('Error fetching videos:', error);
         throw error;
     }
 }
 
 
 
-export   {getSinglePresignedUrl, startMultiPartUpload, getMultiplePresignedUrls ,completeMultiPartUpload, videoUploaded}
+export   {getSinglePresignedUrl, startMultiPartUpload, getMultiplePresignedUrls ,completeMultiPartUpload, videoUploaded,getTotalVideoCount,getVideos}

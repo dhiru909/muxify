@@ -18,9 +18,9 @@ type VideoStatus = 'UPLOADING' | 'UPLOADED' | 'TRANSCODING' | 'TRANSCODED';
 interface Video {
   id: string;
   title: string;
-  thumbnail: string;
+  url: string;
   status: VideoStatus;
-  qualities: Record<VideoQuality, string>;
+  transcodedUrls: Record<VideoQuality, string>;
 }
 
 interface VideoListProps {
@@ -29,6 +29,8 @@ interface VideoListProps {
 
 export default function VideoList({ videos = [] }: VideoListProps) {
   const qualities: VideoQuality[] = ['360p', '480p', '720p', '1080p'];
+  console.log(videos);
+
   const getStatusIcon = (status: VideoStatus) => {
     switch (status) {
       case 'UPLOADING':
@@ -54,22 +56,29 @@ export default function VideoList({ videos = [] }: VideoListProps) {
         return 'bg-green-500';
     }
   };
+  if (videos.length == 0)
+    return (
+      <div className="container mx-auto p-4">
+        <p className="text-2xl font-bold text-gray-500">No videos found</p>
+      </div>
+    );
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Your Transcoded Videos</h1>
-      <Separator className="mb-2" />
       <div className="flex items-center text-center justify-center flex-col md:flex-row md:flex-wrap gap-6 bg-transparent">
-        {videos.map(video => (
+        {videos?.map((video: Video) => (
           <Card
-            key={video.id}
+            key={video?.id}
             className="overflow-hidden h-fit bg-primary-background  flex-grow min-w-[20rem] max-w-[22rem] "
           >
-            <CardHeader className="p-0  max-h-48 ">
-              <VideoThumbnail
-                videoUrl={video.thumbnail}
-                thumbnailHandler={(thumbnail: any) => console.log(thumbnail)}
-                height={200}
-              />
+            <CardHeader className="p-0 ">
+              <div className=" max-h-fit">
+                <VideoThumbnail
+                  videoUrl={video.url}
+                  thumbnailHandler={(thumbnail: any) => {
+                    console.log(thumbnail);
+                  }}
+                />
+              </div>
             </CardHeader>
             <CardContent className="p-4">
               <CardTitle className="text-lg mb-2">
@@ -86,32 +95,37 @@ export default function VideoList({ videos = [] }: VideoListProps) {
             </CardContent>
             <CardFooter className="flex flex-wrap gap-2 p-4 bg-muted justify-center space-x-2">
               {qualities.map(quality => (
-                <Button
-                  key={quality}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-2"
-                  // disabled={
-                  //   video.status !== 'TRANSCODED'
-                  // }
+                <>
+                  {video?.transcodedUrls && (
+                    <Button
+                      key={quality}
+                      variant="outline"
+                      size="sm"
+                      className="flex items-center gap-2"
+                      // disabled={
+                      //   video.status !== 'TRANSCODED'
+                      // }
 
-                  hidden={true}
-                  asChild
-                >
-                  <a
-                    href={video.qualities[quality]}
-                    className={`disabled ${video.status !== 'TRANSCODED' ? 'hidden' : 'visible'}`}
-                    download
-                  >
-                    <Download className="w-4 h-4" />
-                    {quality}
-                  </a>
-                </Button>
+                      hidden={true}
+                      asChild
+                    >
+                      <a
+                        href={video?.transcodedUrls[`_${quality}`]}
+                        className={`disabled ${video.status !== 'TRANSCODED' ? 'hidden' : 'visible'}`}
+                        download
+                      >
+                        <Download className="w-4 h-4" />
+                        {quality}
+                      </a>
+                    </Button>
+                  )}
+                </>
               ))}
             </CardFooter>
           </Card>
         ))}
       </div>
+      <Separator className="mt-4" />
     </div>
   );
 }

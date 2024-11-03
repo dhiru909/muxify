@@ -145,7 +145,7 @@ const Navbar: React.FC = () => {
                       <DropdownMenuGroup>
                         <DropdownMenuItem
                           onClick={() => {
-                            navigateToGivenPath(`/profile/${userInfo.id}`);
+                            navigateToGivenPath(`/profile/`);
                           }}
                         >
                           Profile
@@ -200,7 +200,7 @@ const Navbar: React.FC = () => {
                     <DropdownMenuItem
                       onClick={e => {
                         e.preventDefault();
-                        navigateToGivenPath(`/profile/${userInfo.id}`);
+                        navigateToGivenPath(`/profile`);
                       }}
                     >
                       Profile

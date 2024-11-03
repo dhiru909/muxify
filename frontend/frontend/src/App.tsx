@@ -41,7 +41,7 @@ const router = createBrowserRouter([
         element: <Home />,
       },
       {
-        path: '/profile/:id',
+        path: '/profile',
         element: <Profile />,
       },
     ],
@@ -53,7 +53,7 @@ function App() {
 
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-      <div className="overflow-hidden ">
+      <div className="body overflow-hidden ]">
         <ScrollToTopButton />
         <RouterProvider router={router} />
       </div>

@@ -1,30 +1,32 @@
-// @ts-nocheck
 import React, { useEffect, useRef, useState } from 'react';
+import { RiseLoader } from 'react-spinners';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  useMutation,
+  useInfiniteQuery,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { fetchProjectsOfUSer, getUserDetails, uploadProject } from '@/api/api';
+import { getTotalVideoCount, getVideos } from '@/api/api';
 import { Button } from '@/components/ui/button';
 import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { IoCloseCircleOutline } from 'react-icons/io5';
-import { toast } from '@/components/ui/use-toast';
-import { LoaderCircleIcon } from 'lucide-react';
+
 import VideoList from '@/components/component/video-list';
 import Loader from '@/components/component/loader';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
+import { Separator } from '@/components/ui/separator';
 const formSchema = z.object({
   title: z.string().min(2, {
     message: 'Title must be at least 2 characters.',
@@ -41,140 +43,91 @@ const formSchema = z.object({
     .max(14, 'Password must be at most 14 characters'),
   file: z.instanceof(FileList).optional(),
 });
-const videos = [
-  {
-    id: '1',
-    title: 'My Awesome Video',
-    status: 'TRANSCODED',
-    thumbnail:
-      'https://dhirajkhali.s3.ap-south-1.amazonaws.com/transcoded/1080p-2c8e9a53-c249-43e7-87dc-831ea97de542.mkv',
-    qualities: {
-      '360p': '/path/to/video-360p.mp4',
-      '480p': '/path/to/video-480p.mp4',
-      '720p': '/path/to/video-720p.mp4',
-      '1080p':
-        'https://dhirajkhali.s3.ap-south-1.amazonaws.com/transcoded/1080p-2c8e9a53-c249-43e7-87dc-831ea97de542.mkv',
-    },
-  },
-  {
-    id: '1',
-    title: 'My Awesome Video',
-    status: 'TRANSCODED',
-    thumbnail:
-      'https://dhirajkhali.s3.ap-south-1.amazonaws.com/transcoded/1080p-2c8e9a53-c249-43e7-87dc-831ea97de542.mkv',
-    qualities: {
-      '360p': '/path/to/video-360p.mp4',
-      '480p': '/path/to/video-480p.mp4',
-      '720p': '/path/to/video-720p.mp4',
-      '1080p':
-        'https://dhirajkhali.s3.ap-south-1.amazonaws.com/transcoded/1080p-2c8e9a53-c249-43e7-87dc-831ea97de542.mkv',
-    },
-  },
-  {
-    id: '1',
-    title: 'My Awesome Video',
-    status: 'TRANSCODING',
-    thumbnail:
-      'https://dhirajkhali.s3.ap-south-1.amazonaws.com/trnscoded/1080p-2c8e9a53-c249-43e7-87dc-831ea97de542.mkv',
-    qualities: {
-      '360p': '/path/to/video-360p.mp4',
-      '480p': '/path/to/video-480p.mp4',
-      '720p': '/path/to/video-720p.mp4',
-      '1080p':
-        'https://dhirajkhali.s3.ap-south-1.amazonaws.com/transcoded/1080p-2c8e9a53-c249-43e7-87dc-831ea97de542.mkv',
-    },
-  },
-  {
-    id: '1',
-    title:
-      'My Awesome Video sdfkjbkjsdf hjbsdfsdf sdf jsd fsdf  sdfsd fsd fsdf sdf dg gs gdg dsg sdgds gsd gs sd gsd g sdg sd gsd gsd fsdfkjhsdfhdsjfsdjk ',
-    status: 'TRANSCODED',
-    thumbnail:
-      'https://dhirajkhali.s3.ap-south-1.amazonaws.com/transcoded/1080p-2c8e9a53-c249-43e7-87dc-831ea97de542.mkv',
-    qualities: {
-      '360p': '/path/to/video-360p.mp4',
-      '480p': '/path/to/video-480p.mp4',
-      '720p': '/path/to/video-720p.mp4',
-      '1080p':
-        'https://dhirajkhali.s3.ap-south-1.amazonaws.com/transcoded/1080p-2c8e9a53-c249-43e7-87dc-831ea97de542.mkv',
-    },
-  },
-  {
-    id: '1',
-    title: 'My Awesome Video',
-    status: 'UPLOADED',
-    thumbnail:
-      'https://dhirajkhali.s3.ap-south-1.amazonaws.com/transcoded/1080p-2c8e9a53-c249-43e7-87dc-831ea97de542.mkv',
-    qualities: {
-      '360p': '/path/to/video-360p.mp4',
-      '480p': '/path/to/video-480p.mp4',
-      '720p': '/path/to/video-720p.mp4',
-      '1080p':
-        'https://dhirajkhali.s3.ap-south-1.amazonaws.com/transcoded/1080-video_20220326_101212.mp4',
-    },
-  },
-  // ... more videos
-];
+const useTitle = (title: any) => {
+  const documentDefined = typeof document !== 'undefined';
+  const originalTitle = React.useRef(documentDefined ? document.title : null);
+
+  React.useEffect(() => {
+    if (!documentDefined) return;
+
+    if (document.title !== title) document.title = title;
+
+    return () => {
+      document.title = originalTitle.current!;
+    };
+  }, []);
+};
+
 const Profile = () => {
   // @ts-ignore
+  useTitle('Profile');
   const [error, setError] = useState(null);
-  const [addProjectCardVisible, setAddProjectCardVisible] = useState(false);
+  const [pageNo, setPageNo] = useState(1);
   const { userInfo } = useSelector((state: any) => state.authenticate);
-  const { id } = useParams<{ id: string }>();
+
+  const accessToken = userInfo?.accessToken;
+  const [pageCount, setPageCount] = useState<number | null>(null);
+  const decrementPageNo = () => {
+    if (pageNo > 1) {
+      setPageNo(page => page - 1);
+    }
+  };
+
+  const {
+    data: videos,
+    isError,
+    isFetching,
+    refetch,
+  } = useQuery({
+    queryKey: ['videos', pageNo],
+    queryFn: () =>
+      getVideos({
+        data: { page: pageNo, limit: 10 },
+        accessToken: accessToken,
+      }),
+    enabled: false,
+    // refetchInterval: 5000,
+    refetchIntervalInBackground: true,
+    retry: 1,
+    retryDelay: 3000,
+    staleTime: 60000,
+    gcTime: 1000 * 60,
+  });
+  const {
+    data: pages,
+    isError: isErrorFetchingPages,
+    isFetching: isFetchingPages,
+    isSuccess: successFetchingPages,
+  } = useQuery({
+    queryKey: ['pages'],
+    queryFn: () =>
+      getTotalVideoCount({
+        accessToken: accessToken,
+      }),
+  });
+  const incrementPageNo = () => {
+    if (pageNo < pageCount!) {
+      setPageNo(page => page + 1);
+    }
+  };
+  useEffect(() => {
+    if (pageCount >= 0) {
+      refetch();
+    }
+  }, [pageNo, pageCount]);
+  useEffect(() => {
+    if (successFetchingPages) {
+      setPageCount(Math.ceil(pages / 10));
+    }
+  }, [pages]);
+
   const navigate = useNavigate();
   const [uploadImages, setUploadImages] = useState();
   const queryClient = useQueryClient();
-
-  const addProjRef: React.RefObject<HTMLDivElement> =
-    useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        addProjRef.current &&
-        !addProjRef.current.contains(event.target as Node)
-      ) {
-        setAddProjectCardVisible(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: '',
-      description: '',
-      address: '',
-      type: 'Apartment',
-    },
-  });
   return (
     <>
-      {' '}
-      <div
-        // ref={addProjRef}
-        className={`z-10 border-4 fixed  top-[57%] left-[50%] w-[80%]   ${addProjectCardVisible ? 'block' : 'invisible'} bg-primary-foreground p-8 rounded-lg h-[73lvh] animate-fadeIn -translate-x-1/2 overflow-scroll -translate-y-1/2 `}
-      >
-        <IoCloseCircleOutline
-          height={20}
-          width={20}
-          onClick={() => {
-            setAddProjectCardVisible(false);
-          }}
-          className="absolute right-2 h-6 w-6"
-        />
-      </div>
-      <div
-        className={`${addProjectCardVisible ? 'blur-sm' : ''} mt-[5.25rem] flex flex-col min-h-dvh`}
-      >
-        <header
-          class="body"
-          className="body bg-primary-background  py-12 md:py-16 lg:py-20"
-        >
+      <div className={`mt-[5.25rem] flex flex-col min-h-dvh`}>
+        <header className="body bg-primary-background  py-12 md:py-16 lg:py-20">
           <div className="container flex flex-col items-center text-center gap-4">
             <Avatar className="w-24 h-24 md:w-32 md:h-32">
               <AvatarImage src={userInfo?.dp} />
@@ -189,17 +142,58 @@ const Profile = () => {
                   Glitch Text
                 </div>
               </div> */}
-              <p className="text-muted-foreground md:text-lg">
-                {userInfo?.username}
-              </p>
+              {/* <p className="text-muted-foreground md:text-lg">
+                {userInfo?.email}
+              </p> */}
             </div>
           </div>
         </header>
-        <main className="flex-1">
-          <div className="h-20 w-full items-center text-center ">
-            <Loader />
+        <main className="flex-1 p-4 text-center ">
+          <div className="flex justify-between items-center h-fit px-8">
+            <h1 className="text-2xl font-bold mb-1 text-start pl-4 ">
+              Your Transcoded Videos
+            </h1>
+            <Button
+              onClick={() => {
+                navigate('/home', {
+                  // replace: true,
+                  relative: 'path',
+                });
+              }}
+              className="mb-2"
+            >
+              Upload
+            </Button>
           </div>
-          <VideoList videos={videos} />
+          <Separator className="mb-3" />
+          {!videos && (
+            <RiseLoader className="mt-6" color="pink" cssOverride={{}} />
+          )}
+          <VideoList videos={videos?.videos} />
+          <Pagination className="mb-4">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => decrementPageNo()}
+                  aria-disabled={pageNo <= 1}
+                />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink>{pageNo}</PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => {
+                    incrementPageNo();
+                  }}
+                  aria-disabled={pageNo >= pageCount}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </main>
         <footer className="bg-muted p-6 md:py-12 w-full">
           <div className="container max-w-7xl grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 text-sm">

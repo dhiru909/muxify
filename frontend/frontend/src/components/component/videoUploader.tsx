@@ -22,6 +22,7 @@ type VideoLocalData = {
   fileSize?: Number;
   uuid?: string;
   etag?: string;
+  uploadId?: string;
   presignedUrls?: string[];
   parts?: [
     {
@@ -31,6 +32,7 @@ type VideoLocalData = {
   ];
 };
 export default function VideoUploader() {
+  const queryClient = useQueryClient();
   const [videoData, setVideoData] = useState<VideoLocalData | null>();
   const [localFileName, setLocalFileName] = useState('');
   const [presignedUrl, setPresignedUrl] = useState<string | null>(null);
@@ -55,6 +57,7 @@ export default function VideoUploader() {
       mutationKey: ['videos', file?.name],
       mutationFn: videoUploaded,
       onSuccess(data: string, variables: string, context: any) {
+        queryClient.invalidateQueries({ queryKey: ['videos'] });
         console.log('data', data);
         toast({
           title: 'Success',
@@ -153,16 +156,21 @@ export default function VideoUploader() {
 
         let localDataOfVideo = await localStorage.getItem(file?.name);
 
-        if (localDataOfVideo) {
-          let data = JSON.parse(localDataOfVideo);
-          console.log(data);
-          setVideoData(prev => (prev ? { ...prev, ...data } : data));
+        // if (localDataOfVideo) {
+        let data:VideoLocalData = {};
+        try {
+          data = JSON.parse(localDataOfVideo!);
+        } catch (error) {
+          console.error(error);
         }
+        console.log(data);
+        setVideoData(prev => (prev ? { ...prev, ...data } : data));
+        // }
         console.log(videoData);
 
         let fileName = '';
-        if (videoData?.uuid) {
-          fileName = videoData?.uuid!;
+        if (data?.uuid) {
+          fileName = data?.uuid!;
         } else {
           fileName = uuidv4() + extension;
           // setLocalFileName(fileName)
@@ -182,8 +190,9 @@ export default function VideoUploader() {
         const fileSize = file.size;
         const chunkSize = 10000000;
         let totalChunks = Math.ceil(fileSize / chunkSize);
-        if (videoData?.presignedUrls) {
-          presignedUrls = videoData?.presignedUrls;
+        if (data?.presignedUrls) {
+          presignedUrls = data?.presignedUrls!;
+          uploadId=data?.uploadId!
         } else {
           const res = await startMultiPartUpload(
             fileName,
@@ -203,6 +212,7 @@ export default function VideoUploader() {
           setVideoData(data => ({
             ...data,
             presignedUrls: presignedUrls,
+            uploadId:uploadId
           }));
         }
 
@@ -214,9 +224,9 @@ export default function VideoUploader() {
           let end = Math.min(start + chunkSize, fileSize);
           let chunk = file.slice(start, end);
           let presignedUrl = presignedUrls[i];
-          if (videoData?.parts) {
-            if (videoData?.parts[i]) {
-              parts.push(videoData?.parts[i]);
+          if (data?.parts) {
+            if (data?.parts[i]) {
+              parts.push(data?.parts[i]);
             } else {
               const response = await axios.put(presignedUrl, chunk, {
                 headers: {
@@ -224,14 +234,15 @@ export default function VideoUploader() {
                 },
                 onUploadProgress(progressEvent) {
                   setUploadProgress(prev =>
-                    Math.max(
-                      prev,
-                      Math.round(
-                        (((progressEvent.loaded * 100) / progressEvent.total) *
-                          (i + 1)) /
-                          totalChunks,
-                      ),
-                    ),
+                    // Math.max(
+                    //   prev,
+                    //   Math.round(
+                    //     (((progressEvent.loaded * 100) / progressEvent.total) *
+                    //       (i + 1)) /
+                    //       totalChunks,
+                    //   ),
+                    // ),
+                    Math.round((i+1)/totalChunks*100+ progressEvent.loaded/progressEvent.total!*100/totalChunks)
                   );
                 },
               });
@@ -292,8 +303,8 @@ export default function VideoUploader() {
         };
         //  const accessToken = userInfo?.accessToken;
         console.log(userInfo?.accessToken);
-        console.log("sfaf",fileName);
-        
+        console.log('sfaf', fileName);
+
         videoUploadedMutate({ data: formData, accessToken });
         setUploadStatus('success');
         console.log(complete_upload);
@@ -317,7 +328,7 @@ export default function VideoUploader() {
 
   return (
     <div className="max-w-md mx-auto mt-8 p-6 bg-primary-background border-grey-400 border-2 rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold mb-4">Video Uploader</h2>
+      <h2 className="text-2xl font-bold mb-4">Upload Video</h2>
       <div className="mb-4">
         <input
           type="file"

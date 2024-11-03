@@ -2,9 +2,24 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { UserPlus, CreditCard, Upload, Download } from 'lucide-react';
+import React from 'react';
 
+const useTitle = (title: any) => {
+  const documentDefined = typeof document !== 'undefined';
+  const originalTitle = React.useRef(documentDefined ? document.title : null);
 
+  React.useEffect(() => {
+    if (!documentDefined) return;
+
+    if (document.title !== title) document.title = title;
+
+    return () => {
+      document.title = originalTitle.current!;
+    };
+  }, []);
+};
 export default function LandingPage() {
+  useTitle('MUXIFY');
   return (
     <div className="flex flex-col min-h-screen">
       

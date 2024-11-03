@@ -116,7 +116,7 @@ export default function Login() {
 
   return (
     <div className="flex items-center justify-center h-[100vh] content-center md:my-12  bg-custom-gradient">
-      <div className="w-full max-w-4xl flex  md:rounded-lg md:shadow-md overflow-hidden md:border-[#0f172a] md:border-4 mx-1">
+      <div className="w-full max-w-4xl flex  md:rounded-lg  overflow-hidden md:border-muted md:border-4 mx-1">
         <div
           className="w-3/5 bg-contain content-center bg-no-repeat hidden sm:block "
           style={{

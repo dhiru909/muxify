@@ -11,7 +11,7 @@ const accessKeyId = config.awsS3.accessKeyId;
 const secretAccessKey = config.awsS3.secretAccessKey;
 const region = config.awsS3.region;
 const Bucket = config.awsS3.bucket;
-
+import mongoose from "mongoose"; 
 const s3 = new AWS.S3({
   accessKeyId: accessKeyId,
   secretAccessKey: secretAccessKey,
@@ -252,4 +252,65 @@ const videoUploaded= async (req:Request,res:Response,next:NextFunction) => {
 
 }
 
-export {generateSinglePresignedUrl, startMultiPartUpload, generateMultiplePresignedUrls, completeMultiPartUpload,videoUploaded}
+/**
+ * Retrieves a list of all videos from the database, with pagination.
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @param {NextFunction} next - The next function in the middleware chain.
+ */
+const getVideos  = async(req:Request,res:Response,next:NextFunction)=>{
+  try {
+    const page = Number.parseInt(req.query.page as string) || 1;
+    const limit = Number.parseInt(req.query.limit as string) || 10;
+    const _req = req as AuthRequest
+    // Retrieve all videos from the database, with pagination
+    const videos = await videoModel
+      .find({
+        // @ts-ignore
+        user:_req.userId
+      })
+      .skip((page - 1) * limit)
+      .limit(limit).sort({ createdAt: -1 })
+      .exec();
+
+    // Return the list of videos in the response
+    res.status(200).json({
+      videos,
+      page,
+      limit,
+      // totalPages: Math.ceil((await videoModel.countDocuments({
+      //   // @ts-ignore
+      //   user:_req.userId
+      // })) / limit),
+    });
+  } catch (error) {
+    // Catch any errors that occur during the retrieval of videos
+    console.error("Error retrieving videos:", error);
+    // Return a 500 error with a JSON payload containing an error message
+    return next(createHttpError(500, "Error retrieving videos"));
+  }
+
+}
+const getTotalVideoCountOfUser = async(req:Request,res:Response,next:NextFunction)=>{
+  const _req = req as AuthRequest
+  try {
+    // Retrieve all videos from the database, with pagination
+    const total = await videoModel
+      .countDocuments({
+        // @ts-ignore
+        user:_req.userId
+      })
+    // Return the list of videos in the response
+    res.status(200).json({
+      total
+    });
+  } catch (error) {
+    // Catch any errors that occur during the retrieval of videos
+    console.error("Error retrieving videos:", error);
+    // Return a 500 error with a JSON payload containing an error message
+    return next(createHttpError(500, "Error retrieving videos"));
+  }
+
+}
+export {generateSinglePresignedUrl, startMultiPartUpload, generateMultiplePresignedUrls, completeMultiPartUpload,videoUploaded,getVideos,getTotalVideoCountOfUser}
